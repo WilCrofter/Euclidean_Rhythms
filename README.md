@@ -1,2 +1,2 @@
-# EuclideanRhythms
+# Euclidean Rhythms
 

@@ -13,3 +13,6 @@
 
 # notes
 notes/*
+
+# pycache
+src/__pycache__/*
