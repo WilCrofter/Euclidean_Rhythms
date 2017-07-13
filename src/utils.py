@@ -1,6 +1,5 @@
 import random
 import math
-import time
 import numpy
 import pygame
 from pygame.locals import *
@@ -23,9 +22,8 @@ def rhythm(pattern, duration, sampling_rate, T, bits):
                 buf[n+k][1]=buf[j+k][0]
         j=j+1
     return(pygame.sndarray.make_sound(buf))
-
     
-def play(pattern, reps=0):
+def play(pattern, loops=0):
     size = (1366, 720)
     bits = 16
     duration = len(pattern)/10.0          # in seconds
@@ -33,4 +31,17 @@ def play(pattern, reps=0):
     pygame.mixer.pre_init(sampling_rate, -bits, 2)
     pygame.init()
     snd = rhythm(pattern,duration,sampling_rate,0.2,bits)
-    snd.play(reps)
+    snd.play(loops)
+
+def bjorklund(k,n):
+    if not type(k) == type(n) == int:
+        raise TypeError('Arguments must be integers.')
+    if not n > k:
+        raise ValueError('Second argument must exceed the first.')
+    tmp = [[1] for i in range(k)] + [[0] for i in range(n-k)] 
+    while ([0] in tmp) or (len(tmp) > 1):
+        idx = tmp.index(tmp[-1])
+        for i in range(min(idx,len(tmp)-idx)):
+            tmp[i] += tmp[-1]
+        tmp = tmp[0:max(idx,len(tmp)-idx)]
+    return(tmp[0])
