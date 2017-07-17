@@ -30,7 +30,7 @@ def rhythm(pattern, duration, sampling_rate, T, bits):
         j=j+1
     return(pygame.sndarray.make_sound(buf))
     
-def play(pattern, loops=5):
+def play(pattern, loops=3):
     size = (1366, 720)
     bits = 16
     duration = len(pattern)/10.0          # in seconds
@@ -80,3 +80,48 @@ def geodesics(pattern):
     ans.sort()
     return(ans)
 
+# Examples
+
+playlist={
+    'conga':E(2,3),
+    'take5':E(2,5),
+    'biao':E(3,4),
+    'sangsa':E(3,5),
+    'money':E(3,7),
+    'tresillo':E(3,8),
+    'savari_tal':E(3,11),
+    'dhamar_tal':E(3,14),
+    'mirena':E(4,5),
+    'ruchenitza':E(4,7),
+    'asak':E(4,9),
+    'outside_now':E(4,11),
+    'pancam_savarı_tal':E(4,15),
+    'york_samai':E(5,6),
+    'nawakhat':E(5,7),
+    'cinquillo':E(5,8),
+    'agsag_samai':E(5,9),
+    'pictures_at_an_exhibition':E(5,11),
+    'chakacha':E(5,12),
+    'macedonian_1':E(5,13),
+    'bossa_nova':E(5,16),
+    'pontakos':rotate(E(6,7),5),
+    'mama_cone_pita':E(6,13),
+    'bendir':rotate(E(7,8),6),
+    'bazaragana':E(7,9),
+    'lenk_fahhte':E(7,10),
+    'yoruba':E(7,12),
+    'bulgarian_1':rotate(E(7,13),2),
+    'samba':E(7,16),
+    'macedonian_2':rotate(E(7,17),3),
+    'bulgarian_2':E(7,18),
+    'bulgarian_3':E(8,17),
+    'bulgarian_4':rotate(E(8,19),3),
+    'tsofyan':rotate(E(9,14),2),
+    'luba':rotate(E(9, 16),2),
+    'bulgarian_5':rotate(E(9, 22),2),
+    'bulgarian_6':E(9,23),
+    'sot_silam':rotate(E(11,12),1),
+    'aka_1':E(11,24),
+    'aka_2':E(13,24),
+    'bulgarian_7':rotate(E(15,34),32)
+    }
