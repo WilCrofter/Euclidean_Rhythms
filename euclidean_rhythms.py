@@ -5,6 +5,9 @@ import pygame
 from pygame.locals import *
 
 def drum(T,sampling_rate,f,a):
+    """ Return a floating point list representing a
+    drum sound of duration T, given a sampling rate,
+    a resonance frequency, f, and a damping coefficient,a."""
     tend = 2*math.log(10)/a
     nend = int(round(tend*sampling_rate))
     nsamp = int(round(T*sampling_rate))
@@ -15,6 +18,8 @@ def drum(T,sampling_rate,f,a):
     return(ans)
     
 def rhythm(pattern, duration, sampling_rate, T, bits):
+    """ Return a pygame.Sound object given a pattern of beats, the duration of the pattern in seconds, a sampling rate in samples per second, a beat duration, T, in seconds, and the number of bits with which each sample is to be respresented.
+    """
     beat = duration/len(pattern)
     clk = drum(min(T,beat),sampling_rate, 220.0, 2*math.log(10)/T)
     n_samples = max(len(pattern)*len(clk), int(round(duration*sampling_rate)))
@@ -31,6 +36,8 @@ def rhythm(pattern, duration, sampling_rate, T, bits):
     return(pygame.sndarray.make_sound(buf))
     
 def play(pattern, loops=3):
+    """ Given a rhythmic pattern (a list of integer 1's and 0's), create and play a pygame.Sound object,looping a given number of times (default 3.)
+    """
     size = (1366, 720)
     bits = 16
     duration = len(pattern)/10.0          # in seconds
@@ -41,6 +48,8 @@ def play(pattern, loops=3):
     snd.play(loops)
 
 def Bjorklund(k,n):
+    """ Using Bjorklund's algorithm as described in [The Distance Geometry of Music](https://arxiv.org/abs/0705.4085v1), return a list of 1's and 0's representing a "Euclidean Rhythm" of k beats and n-k rests.
+    """
     if not type(k) == type(n) == int:
         raise TypeError('Arguments must be integers.')
     if not n > k:
@@ -64,9 +73,11 @@ bjorklund = Bjorklund
 E = Bjorklund
 
 def onsets(pattern):
+    """ Given a pattern (a list of 1's and 0's), return the indices of the onsets (1's)."""
     return([i for i,x in enumerate(pattern) if x==1])
 
 def rotate(pattern, k):
+    """ Return a left circular rotation of the given pattern by k."""
     if not type(k) == int:
         raise TypeError('Second argument must be an integer')
     n = len(pattern)
@@ -74,14 +85,49 @@ def rotate(pattern, k):
     return(pattern[k:n]+pattern[0:k])
 
 def geodesics(pattern):
+    """ Return the minimum differences, mod(len(pattern)), of all ordered pairs, i,j, of onsets (1's) in the given pattern."""
     ons = onsets(pattern)
     n = len(pattern)
-    ans=[(ons[i]-ons[j])%n for i in range(len(ons)) for j in range(i)]
+    ans=[min((ons[i]-ons[j])%n,(ons[j]-ons[i])%n) for i in range(len(ons)) for j in range(i)]
     ans.sort()
     return(ans)
 
-# Examples
+def evenness(pattern):
+    """ Return a measure of the given pattern's evenness as that measure is defined in the reference."""
+    return(sum(geodesics(pattern)))
 
+def multiplicities(pattern):
+    """ Return a dictionary keyed by the geodesics in the given pattern, with values equal to the number of times the geodesic occurs."""
+    g = geodesics(pattern)
+    ans = {}
+    x = 0
+    for i in g:
+        if i == x:
+            ans[i] += 1
+        else:
+            x = i
+            ans[i] = 1
+    return(ans)
+
+def winograd_deep(pattern):
+    """ Returns True if the given pattern is Winograd deep. A pattern is Winograd deep if each multiplicity of geodesics 1,...,math.floor(len(pattern)/2) occurs precisely once."""
+    m = multiplicities(pattern)
+    vals = [m[i] for i in m.keys()]
+    M = math.floor(len(pattern)/2)
+    return(M==len(vals)==len(numpy.unique(vals)))
+
+def erdos_deep(pattern):
+    """ A pattern with k onsets is Erdos deep if for every j in 1,...,k-1 there is precisely one geodesic with multiplicity j."""
+    m = multiplicities(pattern)
+    vals = [m[i] for i in m.keys()]
+    ans = len(vals) == len(numpy.unique(vals))
+    for i in range(1,sum(pattern)):
+        ans &= i in vals
+    return(ans)    
+           
+
+""" The following Euclidean rhythms are derived from E. D. Demain *et. al.*[The Distance Geometry of Music](https://arxiv.org/abs/0705.4085v1). The keys are taken more or less arbitrarily from descriptions in the text.
+"""
 playlist={
     'conga':E(2,3),
     'take5':E(2,5),
