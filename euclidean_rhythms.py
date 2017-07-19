@@ -1,6 +1,7 @@
 import random
 import math
 import numpy
+from fractions import gcd
 import pygame
 from pygame.locals import *
 
@@ -54,7 +55,10 @@ def Bjorklund(k,n):
         raise TypeError('Arguments must be integers.')
     if not n > k:
         raise ValueError('Second argument must exceed the first.')
-    tmp = [[1] for i in range(k)] + [[0] for i in range(n-k)]
+    d=gcd(k,n)
+    k1=int(k/d)
+    n1=int(n/d)
+    tmp = [[1] for i in range(k1)] + [[0] for i in range(n1-k1)]
     while ([0] in tmp) or (len(tmp) > 1):
         idx = tmp.index(tmp[-1])
         if len(tmp) == 1+idx:
@@ -62,9 +66,12 @@ def Bjorklund(k,n):
         for i in range(min(idx,len(tmp)-idx)):
             tmp[i] += tmp[-1]
         tmp = tmp[0:max(idx,len(tmp)-idx)]
-    ans = []
+    tmp2 = []
     for i in range(len(tmp)):
-        ans += tmp[i]
+        tmp2 += tmp[i]
+    ans = []
+    for i in range(d):
+        ans += tmp2
     return(ans)
 
 # Aliases:
